@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,3 +27,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::resource('categories',CategoriesController::class);
 
 Route::resource('posts',PostController::class);
+
+Route::get('trashed-posts',[PostController::class,'trashed'])->name('trashed-posts.index');
+Route::put('restore-post/{post}',[PostController::class, 'restore'])->name('restore-posts');
