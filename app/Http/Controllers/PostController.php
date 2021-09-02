@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Posts\StorePostRequest;
 use App\Http\Requests\Posts\UpdatePostRequest;
+use App\Models\Category;
 use App\Models\Post;
+use App\Models\Tag;
 
 class PostController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('verifyCategoryCount')->only(['create','store']);   
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +33,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        return view('posts.create')->with('categories',Category::all())->with('tags',Tag::all());
     }
 
     /**
@@ -42,14 +50,19 @@ class PostController extends Controller
         
         //create the posts
 
-        Post::create([
-            'title'       => $request->title,
-            'description' => $request->description,
-            'content'     => $request->content,
-            'image'       => $image,
-            'published_at'=> $request->published_at, 
-        ]);
+        $post = Post::create([
+                    'title'       => $request->title,
+                    'description' => $request->description,
+                    'content'     => $request->content,
+                    'image'       => $image,
+                    'published_at'=> $request->published_at,
+                    'category_id' => $request->category,
+                ]);
 
+        if($request->tags){
+            $post->tags()->attach($request->tags);
+        }
+        
         // Flash Message
         session()->flash('success','Post created successfully.');
 
@@ -77,7 +90,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('posts.create')->with('post',$post);
+        return view('posts.create')->with('post',$post)->with('categories',Category::all())->with('tags',Tag::all());
     }
 
     /**
@@ -98,6 +111,10 @@ class PostController extends Controller
             $post->deleteImage();
 
             $data['image'] = $image;
+        }
+
+        if($request->tags){
+            $post->tags()->sync($request->tags);
         }
         
         //update attributes
@@ -149,13 +166,18 @@ class PostController extends Controller
         return view('posts.index')->with('posts',$trashed);
     }
 
+    /**
+     * Restored posts.
+     *
+     * @return restored
+     */
     public function restore($id)
     {
         $post = Post::withTrashed()->where('id',$id)->first();
         $post->restore();
 
         // Flash Message
-        session()->flash('success','Post restore successfully.');
+        session()->flash('success','Post restored successfully.');
 
         return redirect()->back();
     }

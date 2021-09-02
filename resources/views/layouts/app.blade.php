@@ -28,7 +28,7 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="true" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -85,9 +85,23 @@
                         {{ session()->get('success') }}
                     </div>
                 @endif
+                @if (session()->has('error'))
+                    <div class="alert alert-danger">
+                        {{ session()->get('error') }}
+                    </div>
+                @endif
                 <div class="row">
                     <div class="col-md-4">
                         <ul class="list-group">
+                            @if (auth()->user()->isAdmin())
+                            <li class="list-group-item">
+                                <a href="">Users</a>
+                            </li>
+                            @endif
+                            
+                            <li class="list-group-item">
+                                <a href="{{ route('tags.index') }}">Tags</a>
+                            </li>
                             <li class="list-group-item">
                                 <a href="{{ route('posts.index') }}">Posts</a>
                             </li>
@@ -112,7 +126,6 @@
             
         </main>
     </div>
-    <script src="{{ asset('js/app.js') }}"></script>
     @yield('scripts')
 </body>
 </html>

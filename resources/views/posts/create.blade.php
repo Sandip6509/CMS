@@ -1,5 +1,9 @@
 @extends('layouts.app')
-
+@section('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.0.0/trix.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
+@endsection
 @section('content')
 <div class="col-md-8">
     <div class="card card-default">
@@ -56,6 +60,47 @@
                         </span>
                     @enderror
                 </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select name="category" id="category" class="form-control @error('category') is-invalid @enderror">
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}"
+                                @if(isset($post))
+                                    @if($category->id == $post->category_id)
+                                        selected
+                                    @endif
+                                @endif
+                                >
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                @if ($tags->count() > 0)
+                    <div class="form-group">
+                        <label for="tag">Tag</label>
+                        <select name="tags[]" id="tags" class="form-control tags-selector" multiple>
+                            @foreach($tags as $tag)
+                                <option value="{{ $tag->id }}"
+                                    @if(isset($post))
+                                        @if($post->hasTag($tag->id))
+                                            selected
+                                        @endif
+                                    @endif
+                                    >
+                                    {{ $tag->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+                
                 <div class="form-group">
                     <button class="btn btn-success">{{ isset($post) ? 'Update Post' : 'Add Post'}}</button>
                 </div>
@@ -68,14 +113,16 @@
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.0.0/trix.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
     <script>
         flatpickr('#published_at',{
             enableTime: true
-        })
+        });
+            
+        $(document).ready(function() {
+            $('.tags-selector').select2();
+        });
+        
     </script>
-@endsection
-
-@section('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.0.0/trix.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endsection

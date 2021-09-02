@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Categories;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCategoryRequest extends FormRequest
@@ -22,9 +23,10 @@ class UpdateCategoryRequest extends FormRequest
      * @return array
      */
     public function rules()
-    {
+    {   
+        $categoryID = $this->category->id;
         return [
-            'name' => ['required','unique:categories']
+            'name' => ['required', Rule::unique('categories')->ignore($categoryID)]
         ];
     }
 }

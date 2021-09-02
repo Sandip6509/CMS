@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Posts;
+namespace App\Http\Requests\Tags;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePostRequest extends FormRequest
+class UpdateTagRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +24,9 @@ class StorePostRequest extends FormRequest
      */
     public function rules()
     {
+        $tagID = $this->tag->id;
         return [
-            'title'         => ['required','unique:Posts'],
-            'description'   => ['required'],
-            'image'         => ['required','image'],
-            'content'       => ['required'],
-            'category'      => ['required']
+            'name' =>['required',Rule::unique('tags')->ignore($tagID)]
         ];
     }
 }
