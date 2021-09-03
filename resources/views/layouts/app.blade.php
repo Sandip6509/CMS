@@ -60,6 +60,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('users.edit-profile') }}">My Profile</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -95,7 +96,7 @@
                         <ul class="list-group">
                             @if (auth()->user()->isAdmin())
                             <li class="list-group-item">
-                                <a href="">Users</a>
+                                <a href="{{ route('users.index') }}">Users</a>
                             </li>
                             @endif
                             

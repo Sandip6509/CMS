@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Blog\PostsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagsController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -17,9 +20,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/',[WelcomeController::class,'index']);
+Route::get('blog/posts/{post}',[PostsController::class,'show'])->name('blog.show');
 
 Auth::routes();
 
@@ -36,3 +38,11 @@ Route::middleware(['auth'])->group(function(){
 
     Route::put('restore-post/{post}',[PostController::class, 'restore'])->name('restore-posts');
 });
+
+Route::middleware(['auth','admin'])->group(function(){
+    Route::get('users/profile',[UsersController::class,'edit'])->name('users.edit-profile');
+    Route::put('users/profile',[UsersController::class,'update'])->name('users.update-profile');
+    Route::get('users',[UsersController::class,'index'])->name('users.index');
+    Route::post('users/{user}/make-admin',[UsersController::class,'makeAdmin'])->name('users.make-admin');
+});
+
